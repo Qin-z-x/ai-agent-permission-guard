@@ -141,6 +141,12 @@ smoke test, the safe-manifest gate and both expected outcomes of `--fail-on high
 `--fail-on` CI 门禁（发现高危返回退出码 1）。本项目是清单审计器，不是运行时沙箱：清单可能不完整
 或不诚实，必须配合容器/seccomp、挂载范围、出口策略与最小权限凭据。不声称发现新漏洞或新 CVE。
 
+## 视频演示
+
+B站：https://www.bilibili.com/video/BV1fj1pzfE2W（64 秒）
+
+视频使用本仓库自带的合成/无害样例与真实命令输出；本项目是启发式检测工具，边界见上文说明。
+
 ## License
 
 MIT -- see [LICENSE](LICENSE). Prior art acknowledged: OWASP least-privilege and
