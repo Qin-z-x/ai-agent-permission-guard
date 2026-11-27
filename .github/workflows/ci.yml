@@ -38,7 +38,7 @@ jobs:
 
       - name: "CLI smoke test: risky manifest scores badly"
         run: |
-          python -m agent_perm_guard scan examples/risky_agent.yaml --json > scan.json && python -c "import json; d=json.load(open('scan.json', encoding='utf-8')); assert d['summary']['counts']['high'] >= 4, d['summary']; assert d['risk']['grade'] in ('D','F'); print('risk:', d['risk'])"
+          python -m agent_perm_guard scan examples/risky_agent.yaml --json > scan.json && python -c "import json; d=json.load(open('scan.json', encoding='utf-8')); assert d['summary']['counts']['high'] >= 4, d['summary']; assert d['manifests'][0]['risk']['grade'] in ('D','F'); print('risk:', d['manifests'][0]['risk'])"
 
       - name: "YAML and JSON manifests are both parsed"
         run: |
