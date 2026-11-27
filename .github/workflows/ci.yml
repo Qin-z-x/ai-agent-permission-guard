@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Core must be standard-library only
+        run: python scripts/check_core_deps.py
+
+      - name: Unit tests (unittest, no third-party dependencies)
+        run: python -m unittest discover -s tests -t .
+
+      - name: CLI smoke test: risky manifest scores badly
+        run: python -m agent_perm_guard scan examples/risky_agent.yaml --json > scan.json && python -c "import json; d=json.load(open('scan.json', encoding='utf-8')); assert d['summary']['counts']['high'] >= 4, d['summary']; assert d['risk']['grade'] in ('D','F'); print('risk:', d['risk'])"
+
+      - name: YAML and JSON manifests are both parsed
+        run: python -m agent_perm_guard scan examples/risky_agent.yaml examples/risky_agent.json --json > both.json && python -c "import json; d=json.load(open('both.json', encoding='utf-8')); assert d['summary']['manifests'] == 2, d['summary']; print('manifests:', d['summary']['manifests'])"
+
+      - name: Safe manifest passes the strictest gate
+        run: python -m agent_perm_guard scan examples/safe_agent.json --fail-on low
+
+      - name: CI gate blocks the risky manifest (expected exit code 1)
+        run: |
+          set +e
+          python -m agent_perm_guard scan examples/risky_agent.yaml --fail-on high
+          code=$?
+          set -e
+          echo "scan exit code: $code"
+          test "$code" -eq 1

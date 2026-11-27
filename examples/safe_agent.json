@@ -1,0 +1,32 @@
+{
+  "name": "docs-agent",
+  "description": "Read-only documentation assistant with a narrow workspace",
+  "tools": [
+    {
+      "name": "read_docs",
+      "description": "Read files under ./docs only",
+      "permissions": {
+        "filesystem": {"read": ["./docs/**"]},
+        "network": []
+      }
+    },
+    {
+      "name": "write_report",
+      "description": "Write the report to ./workspace/out",
+      "permissions": {
+        "filesystem": {"write": ["./workspace/out/**"]},
+        "network": []
+      },
+      "requires_confirmation": true
+    },
+    {
+      "name": "search_api",
+      "description": "Call the public documentation search API",
+      "permissions": {
+        "network": ["https://api.example.com"],
+        "filesystem": {"read": []},
+        "env": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+$ python -m agent_perm_guard report examples/risky_agent.yaml
+agent-perm-guard 0.1.0  scan  1 manifest(s)
+manifest 1/1  examples/risky_agent.yaml                      risk=100 grade=F tools=4 findings=16
+  HIGH   PERM-SHELL                 tool=shell          tool can run shell/exec commands
+  HIGH   PERM-PIPE-EXEC             tool=shell          command downloads and executes remote content (curl/wget | sh)
+  HIGH   PERM-FS-WRITE-BROAD        tool=shell          filesystem write scope is unbounded (*)
+  HIGH   PERM-NETWORK-BROAD         tool=shell          unrestricted network access (no egress allowlist)
+  LOW    PERM-SECRET-ENV            tool=shell          environment variables are passed to the tool (review the set)
+  HIGH   PERM-AUTO-APPROVE          tool=shell          dangerous tool is auto-approved without human review
+  HIGH   PERM-SHELL                 tool=file_writer    tool can run shell/exec commands
+  HIGH   PERM-FS-WRITE-BROAD        tool=file_writer    filesystem write scope is unbounded (C:/Users/Public)
+  HIGH   PERM-FS-SENSITIVE          tool=file_writer    filesystem scope includes sensitive/credential paths
+  HIGH   PERM-AUTO-APPROVE          tool=file_writer    dangerous tool is auto-approved without human review
+  HIGH   PERM-NETWORK-BROAD         tool=http_fetch     unrestricted network access (no egress allowlist)
+  MEDIUM PERM-SECRET-ENV            tool=http_fetch     secret-like environment variables are exposed to the tool
+  HIGH   PERM-AUTO-APPROVE          tool=http_fetch     dangerous tool is auto-approved without human review
+  HIGH   PERM-SHELL                 tool=backup         tool can run shell/exec commands
+  HIGH   PERM-AUTO-APPROVE          tool=backup         dangerous tool is auto-approved without human review
+  LOW    PERM-IMAGE-LATEST          tool=backup         container image is not pinned (alpine:latest)
+summary: 1 manifest(s), 16 finding(s): 13 high, 1 medium, 2 low; max risk=100 grade=F
+least-privilege fixes:
+  PERM-SHELL                 Do not expose a raw shell: provide narrow, typed tools (argv lists) and run them in a sandbox without shell=True.
+  PERM-PIPE-EXEC             Remove remote-install pipelines (curl | sh). Pin a verified artifact and install it from a reviewed build step, not from the agent.
+  PERM-FS-WRITE-BROAD        Narrow the write scope to a dedicated work directory (e.g. ./workspace/**) and mount only that directory into the sandbox.
+  PERM-NETWORK-BROAD         Egress through a proxy with an allowlist of required hostnames; deny everything else, including metadata/private ranges.
+  PERM-SECRET-ENV            Do not inherit the environment and do not pass long-lived secrets to tools; use short-lived, scoped credentials issued per call.
+  PERM-AUTO-APPROVE          Require human approval for dangerous tools; auto-approve only idempotent, low-impact, read-only tools.
+  PERM-FS-SENSITIVE          Deny credential/system paths explicitly and keep secrets out of the agent's filesystem view; mount only the needed read-only inputs.
+  PERM-IMAGE-LATEST          Pin container images by digest or immutable tag; ':latest' makes the tool's behaviour change silently.
+[exit code: 0]

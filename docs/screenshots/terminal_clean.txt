@@ -1,0 +1,6 @@
+$ python -m agent_perm_guard scan examples/safe_agent.json --fail-on low
+agent-perm-guard 0.1.0  scan  1 manifest(s)
+manifest 1/1  examples/safe_agent.json                       risk=0   grade=A tools=3 findings=0
+summary: 1 manifest(s), 0 finding(s): 0 high, 0 medium, 0 low; max risk=0 grade=A
+PASS: no finding at or above severity 'low'
+[exit code: 0]

@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-agent-permission-guard"
+version = "0.1.0"
+description = "Audit AI agent tool manifests (JSON or YAML): shell/exec capability, filesystem write scope, sensitive read paths, network access, secrets in env, auto-approve flags and unconfirmed destructive tools -> weighted risk score, grade and concrete least-privilege fixes. Stdlib-only Python CLI."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [{ name = "agent-perm-guard contributors" }]
+keywords = ["ai-agents", "permissions", "least-privilege", "llm", "security", "audit", "yaml", "cli", "python"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Security",
+]
+dependencies = []
+
+[project.scripts]
+agent-perm-guard = "agent_perm_guard.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/Qin-z-x/ai-agent-permission-guard"
+Repository = "https://github.com/Qin-z-x/ai-agent-permission-guard"
+Issues = "https://github.com/Qin-z-x/ai-agent-permission-guard/issues"
+Changelog = "https://github.com/Qin-z-x/ai-agent-permission-guard/blob/main/CHANGELOG.md"
+Evidence = "https://github.com/Qin-z-x/ai-agent-permission-guard/blob/main/docs/EVIDENCE.md"
+ThreatModel = "https://github.com/Qin-z-x/ai-agent-permission-guard/blob/main/docs/THREAT_MODEL.md"
+
+[tool.setuptools]
+packages = ["agent_perm_guard"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
